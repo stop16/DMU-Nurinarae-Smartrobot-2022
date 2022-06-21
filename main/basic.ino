@@ -35,6 +35,10 @@ int low_cube[4][2] = {
   {0, 0}
 };
 
+int robot_direction = 0;
+int robot_dirs[4] = {0,1,2,3}; //0 : left, 1 : front, 2 : right, 3 : rear
+int robot_position = 0;
+
 
 
 void setup() {
@@ -86,7 +90,7 @@ void setup() {
   //prizm.PrizmEnd();
   opening();
   line();
-  location(1);
+  
   check_value(0);// 오브젝트 체크
   /*(0,x)의 기둥이 노랑이라면, (1,x)로 이동해 잡아온다.(al3에는 (1,x)의 기둥의 색 ID 저장) 그 후,
      (2,x)로 이동해 큐브가 al3와 일치하는지 확인 후,
@@ -96,7 +100,7 @@ void setup() {
   if (low_cube[0][dir[0]] == 2)
   {
     mov();
-    line();location(2);
+    line();
     check_value(1);
     al3 = low_cube[1][dir[1]];
     mov();
@@ -105,16 +109,16 @@ void setup() {
     grip_close();
     cube_out();
     object_turn_f(1);
-    line();location(1);
+    line();
     mov();
     object_turn_r(0);
     cube_in();
     grip_open();
     cube_out();
     object_turn_r(0);
-    line();location(2);
+    line();
     movv();
-    line();location(3);
+    line();
     check_value(2);
     if (high_cube[2][dir[2]] == al3) {
       al5 = low_cube[2][dir[2]];
@@ -125,7 +129,7 @@ void setup() {
       grip_close();
       cube_out();
       object_turn_f(2);
-      line();location(2);
+      line();
       movv();
       object_turn_r(1);
       cube_in();
@@ -135,7 +139,7 @@ void setup() {
     }
     else if (high_cube[2][dir[2]] != al3) {
       mov();
-      line();location(4);
+      line();
       check_value(3);
       al5 = low_cube[3][dir[3]];
       al5_y = 3;
@@ -145,9 +149,9 @@ void setup() {
       grip_close();
       cube_out();
       object_turn_f(3);
-      line();location(3);
+      line();
       movv();
-      line();location(2);
+      line();
       mov();
       object_turn_r(1);
       cube_in();
@@ -170,7 +174,7 @@ void setup() {
     grip_close();
     cube_out();
     object_turn_r(0);
-    line();location(2);
+    line();
     check_value(1);
     if (low_cube[1][dir[1]] == 2)
     {
@@ -180,7 +184,7 @@ void setup() {
       grip_open();
       cube_out();
       object_turn_r(1);//(1,x)에서 앞을 보는 상태
-      line();location(3);
+      line();
       check_value(2);
       if (high_cube[2][dir[2]] == al3)
       {
@@ -192,22 +196,22 @@ void setup() {
         al5_y = 2;
         cube_out();
         object_turn_f(2);
-        line();location(2);
+        line();
         movv();
-        line();location(1);
+        line();
         mov();
         object_turn_r(0);
         cube_in();
         grip_open();
         cube_out();
         object_turn_r(0);
-        line();location(2);
+        line();
         mov();
       }
       else if (high_cube[2][dir[2]] != al3)
       {
         movv();
-        line();location(4);
+        line();
         check_value(3);
         mov();
         object_turn_f(3);
@@ -217,25 +221,25 @@ void setup() {
         al5_y = 3;
         cube_out();
         object_turn_f(3);
-        line();location(3);
+        line();
         movv();
-        line();location(2);
+        line();
         movv();
-        line();location(1);
+        line();
         mov();
         object_turn_r(0);
         cube_in();
         grip_open();
         cube_out();
         object_turn_r(0);
-        line();location(2);
+        line();
         mov();
       }
     }
     else
     {
       movv();
-      line();location(3);
+      line();
       check_value(2);
       if (low_cube[2][dir[2]] == 2)
       {
@@ -247,7 +251,7 @@ void setup() {
         if (high_cube[1][dir[1]] == al3)
         {
           object_turn_f(2);
-          line();location(1);
+          line();
           mov();
           al5 = low_cube[1][dir[1]];
           al5_y = 1;
@@ -255,20 +259,20 @@ void setup() {
           grip_close();
           cube_out();
           object_turn_r(1);
-          line();location();
+          line();
           mov();
           object_turn_r(0);
           cube_in();
           grip_open();
           cube_out();
           object_turn_r(0);
-          line();location();
+          line();
           mov();
         }
         else if (high_cube[1][dir[1]] != al3)
         {
           object_turn_r(2);
-          line();location();
+          line();
           check_value(3);
           mov();
           al5 = low_cube[3][dir[3]];
@@ -278,25 +282,25 @@ void setup() {
           grip_close();
           cube_out();
           object_turn_f(3);
-          line();location();
+          line();
           movv();
-          line();location();
+          line();
           movv();
-          line();location();
+          line();
           mov();
           object_turn_r(0);
           cube_in();
           grip_open();
           cube_out();
           object_turn_r(0);
-          line();location();
+          line();
           mov();
         }
       }
       else
       {
         mov();
-        line();location();
+        line();
         check_value(3);
         if (low_cube[3][dir[3]] == 2)
         {
@@ -308,9 +312,9 @@ void setup() {
           object_turn_f(3);//(3,x)에서 뒤를 보는 상태
           if (high_cube[1][dir[1]] == al3)
           {
-            line();location();
+            line();
             movv();
-            line();location();
+            line();
             mov();
             al5 = low_cube[1][dir[1]];
             al5_y = 1;
@@ -319,19 +323,19 @@ void setup() {
             grip_close();
             cube_out();
             object_turn_f(1);
-            line();location();
+            line();
             mov();
             object_turn_r(0);
             cube_in();
             grip_open();
             cube_out();
             object_turn_r(0);
-            line();location();
+            line();
             mov();
           }
           else if (high_cube[2][dir[2]] == al3)
           {
-            line();location();
+            line();
             mov();
             al5 = low_cube[2][dir[2]];
             al5_y = 2;
@@ -340,16 +344,16 @@ void setup() {
             grip_close();
             cube_out();
             object_turn_f(2);
-            line();location();
+            line();
             movv();
-            line();location();
+            line();
             mov();
             object_turn_r(0);
             cube_in();
             grip_open();
             cube_out();
             object_turn_r(0);
-            line();location();
+            line();
             mov();
           }
         }
@@ -366,7 +370,7 @@ void setup() {
       cube_out();
       object_turn_r(1);
       if (al5_y == 2) {
-        line();location();
+        line();
         mov();
         object_turn_f(2);
         cube_in();
@@ -376,9 +380,9 @@ void setup() {
         al7_cf = 2;
       }
       else if (al5_y == 3) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_f(3);
         cube_in();
@@ -390,7 +394,7 @@ void setup() {
     }
     if (high_cube[2][dir[2]] == al5) //1에 al5기둥이 있는 경우, 3에 al5기둥이 있는 경우
     {
-      line();location();
+      line();
       mov();
       object_turn_f(2);
       cube_in();
@@ -398,7 +402,7 @@ void setup() {
       cube_out();
       if (al5_y == 1) {
         object_turn_f(2);
-        line();location();
+        line();
         mov();
         object_turn_r(1);
         cube_in();
@@ -409,7 +413,7 @@ void setup() {
       }
       else if (al5_y == 3) {
         object_turn_r(2);
-        line();location();
+        line();
         mov();
         object_turn_f(3);
         cube_in();
@@ -421,16 +425,16 @@ void setup() {
     }
     if (high_cube[3][dir[3]] == al5) //1에 al5기둥이 있는 경우, 2에 al5기둥이 있는 경우
     {
-      line();location();
+      line();
       movv();
-      line();location();
+      line();
       mov();
       object_turn_f(3);
       cube_in();
       grip_close();
       cube_out();
       object_turn_f(3);
-      line();location();
+      line();
       mov();
       if (al5_y == 2) {
         object_turn_r(2);
@@ -441,7 +445,7 @@ void setup() {
         al7_cf = 2;
       }
       else if (al5_y == 1) {
-        line();location();
+        line();
         mov();
         object_turn_r(1);
         cube_in();
@@ -455,9 +459,9 @@ void setup() {
   }
   if (knowledge == 3) //(3,x)로 가서 잡은 뒤, al5_y가 2,1,0일 때 할 행동 지정
   {
-    line();location();
+    line();
     movv();
-    line();location();
+    line();
     check_value(3);
     mov();
     object_turn_f(3);
@@ -466,7 +470,7 @@ void setup() {
     cube_out();
     object_turn_f(3);
     if (al5_y == 2) {
-      line();location();
+      line();
       mov();
       object_turn_r(2);
       cube_in();
@@ -476,9 +480,9 @@ void setup() {
       al7_cf = 2;
     }
     else if (al5_y == 1) {
-      line();location();
+      line();
       movv();
-      line();location();
+      line();
       mov();
       object_turn_r(1);
       cube_in();
@@ -488,18 +492,18 @@ void setup() {
       al7_cf = 1;
     }
     else if (al5_y == 0) {
-      line();location();
+      line();
       movv();
-      line();location();
+      line();
       movv();
-      line();location();
+      line();
       mov();
       object_turn_r(0);
       cube_in();
       grip_open();
       cube_out();
       object_turn_r(0);
-      line();location();
+      line();
       mov();//(1,x)에서 앞을 보고있다.
       al7_cf = 1;
     }
@@ -511,7 +515,7 @@ void setup() {
     if (low_cube[0][dir[0]] == 2) {
       right();
       right();
-      line();location();
+      line();
       mov();
       object_turn_r(0);
       cube_in();
@@ -519,53 +523,53 @@ void setup() {
       cube_out();
       object_turn_r(0);
       if (low_cube[1][dir[1]] == al7) {
-        line();location();
+        line();
         mov();
         object_turn_f(1);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(1);
-        line();location();
+        line();
         mov();
       }
       if (low_cube[2][dir[2]] == al7) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_f(2);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(2);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
       if (low_cube[3][dir[3]] == al7) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_f(3);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(3);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
     }
     if (low_cube[2][dir[2]] == 2) {
-      line();location();
+      line();
       mov();
       object_turn_f(2);
       cube_in();
@@ -573,9 +577,9 @@ void setup() {
       cube_out();
       if (low_cube[0][dir[0]] == al7) {
         object_turn_f(2);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_r(0);
         cube_in();
@@ -585,37 +589,37 @@ void setup() {
       }
       if (low_cube[1][dir[1]] == al7) {
         object_turn_f(2);
-        line();location();
+        line();
         mov();
         object_turn_r(1);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(1);
-        line();location();
+        line();
         mov();
       }
       if (low_cube[3][dir[3]] == al7) {
         object_turn_r(2);
-        line();location();
+        line();
         mov();
         object_turn_f(3);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(3);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
     }
     if (low_cube[3][dir[3]] == 2) {
-      line();location();
+      line();
       movv();
-      line();location();
+      line();
       mov();
       object_turn_f(3);
       cube_in();
@@ -623,11 +627,11 @@ void setup() {
       cube_out();
       object_turn_f(3);
       if (low_cube[0][dir[0]] == al7) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_r(0);
         cube_in();
@@ -636,38 +640,38 @@ void setup() {
         object_turn_f(0);
       }
       if (low_cube[1][dir[1]] == al7) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_r(1);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(1);
-        line();location();
+        line();
         mov();
       }
       if (low_cube[2][dir[2]] == al7) {
-        line();location();
+        line();
         mov();
         object_turn_r(2);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(2);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
     }
   }
   if (al7_cf == 2) {
     if (low_cube[0][dir[0]] == 2) {
-      line();location();
+      line();
       movv();
-      line();location();
+      line();
       mov();
       object_turn_r(0);
       cube_in();
@@ -675,53 +679,53 @@ void setup() {
       cube_out();
       object_turn_r(0);
       if (low_cube[1][dir[1]] == al7) {
-        line();location();
+        line();
         mov();
         object_turn_f(1);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(1);
-        line();location();
+        line();
         mov();
       }
       if (low_cube[2][dir[2]] == al7) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_f(2);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(2);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
       if (low_cube[3][dir[3]] == al7) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_f(3);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(3);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
     }
     if (low_cube[1][dir[1]] == 2) {
-      line();location();
+      line();
       mov();
       object_turn_r(1);
       cube_in();
@@ -729,7 +733,7 @@ void setup() {
       cube_out();
       if (low_cube[0][dir[0]] == al7) {
         object_turn_f(1);
-        line();location();
+        line();
         mov();
         object_turn_r(0);
         cube_in();
@@ -739,41 +743,41 @@ void setup() {
       }
       if (low_cube[2][dir[2]] == al7) {
         object_turn_r(1);
-        line();location();
+        line();
         mov();
         object_turn_f(2);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(2);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
       if (low_cube[3][dir[3]] == al7) {
         object_turn_r(1);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_f(3);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(3);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
     }
     if (low_cube[3][dir[3]] == 2) {
       right();
       right();
-      line();location();
+      line();
       mov();
       object_turn_f(3);
       cube_in();
@@ -781,11 +785,11 @@ void setup() {
       cube_out();
       object_turn_f(3);
       if (low_cube[0][dir[0]] == al7) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_r(0);
         cube_in();
@@ -794,40 +798,40 @@ void setup() {
         object_turn_f(0);
       }
       if (low_cube[1][dir[1]] == al7) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_r(1);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(1);
-        line();location();
+        line();
         mov();
       }
       if (low_cube[2][dir[2]] == al7) {
-        line();location();
+        line();
         mov();
         object_turn_r(2);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(2);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
     }
   }
   if (al7_cf == 3) {
     if (low_cube[0][dir[0]] == 2) {
-      line();location();
+      line();
       movv();
-      line();location();
+      line();
       movv();
-      line();location();
+      line();
       mov();
       object_turn_r(0);
       cube_in();
@@ -835,55 +839,55 @@ void setup() {
       cube_out();
       object_turn_r(0);
       if (low_cube[1][dir[1]] == al7) {
-        line();location();
+        line();
         mov();
         object_turn_f(1);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(1);
-        line();location();
+        line();
         mov();
       }
       if (low_cube[2][dir[2]] == al7) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_f(2);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(2);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
       if (low_cube[3][dir[3]] == al7) {
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_f(3);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(3);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
     }
     if (low_cube[1][dir[1]] == 2) {
-      line();location();
+      line();
       movv();
-      line();location();
+      line();
       mov();
       object_turn_r(1);
       cube_in();
@@ -891,7 +895,7 @@ void setup() {
       cube_out();
       if (low_cube[0][dir[0]] == al7) {
         object_turn_f(1);
-        line();location();
+        line();
         mov();
         object_turn_r(0);
         cube_in();
@@ -901,39 +905,39 @@ void setup() {
       }
       if (low_cube[2][dir[2]] == al7) {
         object_turn_r(1);
-        line();location();
+        line();
         mov();
         object_turn_f(2);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(2);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
       if (low_cube[3][dir[3]] == al7) {
         object_turn_r(1);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_f(3);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(3);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
     }
     if (low_cube[2][dir[2]] == 2) {
-      line();location();
+      line();
       mov();
       object_turn_r(2);
       cube_in();
@@ -941,9 +945,9 @@ void setup() {
       cube_out();
       if (low_cube[0][dir[0]] == al7) {
         object_turn_f(2);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
         object_turn_r(0);
         cube_in();
@@ -953,30 +957,30 @@ void setup() {
       }
       if (low_cube[1][dir[1]] == al7) {
         object_turn_f(2);
-        line();location();
+        line();
         mov();
         object_turn_r(1);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(1);
-        line();location();
+        line();
         mov();
       }
       if (low_cube[3][dir[3]] == al7) {
         object_turn_r(2);
-        line();location();
+        line();
         mov();
         object_turn_f(3);
         cube_in();
         grip_open();
         cube_out();
         object_turn_f(3);
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         movv();
-        line();location();
+        line();
         mov();
       }
     }
@@ -1109,7 +1113,16 @@ void line()
     {
       wheel(-50,0,250);
     }
-    
+    if(robot_direction == robot_dirs[1])//로봇이 앞을 보고 있으면
+    {
+      robot_position += 1;
+      location(robot_position);
+    }
+    else
+    {
+      robot_position -= 1;
+      location(robot_position);
+    }
   }
   /*
   int lspd, rspd;
@@ -1188,6 +1201,14 @@ void left()
       break;
     }
   }
+  if(robot_direction == robot_dirs[0])//왼쪽을 보고있으면, 뒤를 보는 값으로 바꿔준다.
+  {
+    robot_direction = robot_dirs[3];
+  }
+  else//아니라면, 값을 빼준다.
+  {
+    robot_direction = robot_dirs[robot_direction-1];
+  }
 }
 
 void right()
@@ -1205,6 +1226,15 @@ void right()
       break;
     }
   }
+  if(robot_direction == robot_dirs[3])//오른쪽을 보고있으면, 뒤를 보는 값으로 바꿔준다.
+  {
+    robot_direction = robot_dirs[0];
+  }
+  else//아니라면, 값을 더해준다.
+  {
+    robot_direction = robot_dirs[robot_direction+1];
+  }
+
 }
 
 void object_turn_f(int y)
