@@ -19,7 +19,7 @@ int al7_cf;
 int al7;
 int bf;
 
-char* c[3] = {"BLUE","GREEN","RED"};
+char* c[3] = {"BLUE", "GREEN", "RED"};
 float battery_voltage;
 int high_cube[4][2] = {
   {0, 0},
@@ -34,11 +34,6 @@ int low_cube[4][2] = {
   {0, 0},
   {0, 0}
 };
-
-int robot_direction = 0;
-int robot_dirs[4] = {0,1,2,3}; //0 : left, 1 : front, 2 : right, 3 : rear
-int robot_position = 0;
-
 
 
 void setup() {
@@ -68,29 +63,29 @@ void setup() {
   delay(100);//배터리값 표시
   prizm.setServoSpeed(1, 40); //서보 속도 설정
   prizm.setServoSpeed(2, 40);
-  prizm.setServoPosition(1, 90); //그립 오픈
-  prizm.setServoPosition(2, 90);
+  prizm.setServoPosition(1, 100); //그립 오픈
+  prizm.setServoPosition(2, 80);
   //코드부분/////////////////////////////////////////
   turnhusky_front();
   //cube_in();
   //grip_close();
   //wheel(0,0,260);//X = 좌우 이동, Y = 좌우 회전, Z = 전후 이동
   /*
-  exc.resetEncoders(1);
-  exc.resetEncoders(2);
-  exc.setMotorTargets(1,0,0,80,720);
-  exc.setMotorTargets(2,0,0,80,720);
-  while (exc.readMotorBusy(1,2)) {}
-  exc.resetEncoders(1);
-  exc.resetEncoders(2);
-  exc.setMotorTargets(1,0,0,360,720);
-  exc.setMotorTargets(2,0,0,360,720);
-  while (exc.readMotorBusy(1,2)) {}
+    exc.resetEncoders(1);
+    exc.resetEncoders(2);
+    exc.setMotorTargets(1,0,0,80,720);
+    exc.setMotorTargets(2,0,0,80,720);
+    while (exc.readMotorBusy(1,2)) {}
+    exc.resetEncoders(1);
+    exc.resetEncoders(2);
+    exc.setMotorTargets(1,0,0,360,720);
+    exc.setMotorTargets(2,0,0,360,720);
+    while (exc.readMotorBusy(1,2)) {}
   */
   //prizm.PrizmEnd();
   opening();
   line();
-  
+
   check_value(0);// 오브젝트 체크
   /*(0,x)의 기둥이 노랑이라면, (1,x)로 이동해 잡아온다.(al3에는 (1,x)의 기둥의 색 ID 저장) 그 후,
      (2,x)로 이동해 큐브가 al3와 일치하는지 확인 후,
@@ -233,7 +228,7 @@ void setup() {
         cube_out();
         object_turn_r(0);
         line();
-        mov();
+        movv();
       }
     }
     else
@@ -255,10 +250,11 @@ void setup() {
           mov();
           al5 = low_cube[1][dir[1]];
           al5_y = 1;
+          object_turn_r(1);
           cube_in();
           grip_close();
           cube_out();
-          object_turn_r(1);
+          object_turn_f(1);
           line();
           mov();
           object_turn_r(0);
@@ -267,7 +263,7 @@ void setup() {
           cube_out();
           object_turn_r(0);
           line();
-          mov();
+          movv();
         }
         else if (high_cube[1][dir[1]] != al3)
         {
@@ -361,6 +357,7 @@ void setup() {
     }
   }
 
+
   if (knowledge == 4) //모두 스캔했다면 al5 찾는다.
   {
     if (high_cube[1][dir[1]] == al5) {
@@ -435,8 +432,8 @@ void setup() {
       cube_out();
       object_turn_f(3);
       line();
-      mov();
       if (al5_y == 2) {
+        mov();
         object_turn_r(2);
         cube_in();
         grip_open();
@@ -445,6 +442,7 @@ void setup() {
         al7_cf = 2;
       }
       else if (al5_y == 1) {
+        movv();
         line();
         mov();
         object_turn_r(1);
@@ -1019,18 +1017,18 @@ void mov()
 
 void movv()
 {
-  wheel(0,0,240);
+  wheel(0, 0, 240);
   delay(100);
 }
 
 
 void opening()
 {
-  lcd.setCursor(8,0);
+  lcd.setCursor(8, 0);
   lcd.print("START");
   while (1) {
-    exc.setMotorSpeeds(1, -120, 120);
-    exc.setMotorSpeeds(2, -120, 120);
+    exc.setMotorSpeeds(1, -200, 200);
+    exc.setMotorSpeeds(2, -200, 200);
     if (digitalRead(4) == 1)
     {
       exc.setMotorSpeeds(1, 0, 0);
@@ -1039,8 +1037,8 @@ void opening()
     }
   }
   while (1) {
-    exc.setMotorSpeeds(1, 120, 120);
-    exc.setMotorSpeeds(2, 120, 120);
+    exc.setMotorSpeeds(1, 160, 160);
+    exc.setMotorSpeeds(2, 160, 160);
     if (digitalRead(2) == 1 && digitalRead(3) == 1 && digitalRead(4) == 1)
     {
       exc.setMotorSpeeds(1, 0, 0);
@@ -1050,8 +1048,8 @@ void opening()
   }
   exc.resetEncoders(1);
   exc.resetEncoders(2);
-  exc.setMotorTargets(1, 80, 180, 80, 180);
-  exc.setMotorTargets(2, 80, 180, 80, 180);
+  exc.setMotorTargets(1, 100, 180, 100, 180);
+  exc.setMotorTargets(2, 100, 180, 100, 180);
   while (exc.readMotorBusy(1, 1)) {}
   while (1)
   {
@@ -1072,62 +1070,53 @@ void ending()
   //마지막 세개 인식 이후 동작임
   exc.resetEncoders(1);
   exc.resetEncoders(2);
-  exc.setMotorTargets(1, -160, -180, -160, -180);
-  exc.setMotorTargets(2, -160, -180, -160, -180);
+  exc.setMotorTargets(1, -300, -180, -300, -180);
+  exc.setMotorTargets(2, -300, -180, -300, -180);
   while (exc.readMotorBusy(1, 1)) {}
   exc.resetEncoders(1);
   exc.resetEncoders(2);
-  exc.setMotorTargets(1, 160, 720, -160, -720);
-  exc.setMotorTargets(2, 160, 720, -160, -720);
+  exc.setMotorTargets(1, 300, 720, -300, -720);
+  exc.setMotorTargets(2, 300, 720, -300, -720);
   while (exc.readMotorBusy(1, 1)) {}
   exc.resetEncoders(1);
   exc.resetEncoders(2);
-  exc.setMotorTargets(1, 160, 1440, 160, 1440);
-  exc.setMotorTargets(2, 160, 1440, 160, 1440);
+  exc.setMotorTargets(1, 300, 1440, 300, 1440);
+  exc.setMotorTargets(2, 300, 1440, 300, 1440);
   while (exc.readMotorBusy(1, 1)) {}
-  lcd.setCursor(8,0);
+  lcd.setCursor(8, 0);
   lcd.print("      ");
-  lcd.setCursor(8,0);
+  lcd.setCursor(8, 0);
   lcd.print("FINISH");
 }
 
 void line()
 {
 
-  while(1)
+  while (1)
   {
-    if(digitalRead(2) == 1 && digitalRead(3) == 1 && digitalRead(4) == 1)
+    if (digitalRead(2) == 1 && digitalRead(3) == 1 && digitalRead(4) == 1)
     {
-      wheel(0,0,0);
+      wheel(0, 0, 0);
       break;
     }
-    if(digitalRead(2) == 1 && digitalRead(3) == 0 && digitalRead(4) == 0)
+    if (digitalRead(2) == 1 && digitalRead(3) == 0 && digitalRead(4) == 0)
     {
-      wheel(0,-80,150);
+      wheel(0, -80, 150);
     }
-    if(digitalRead(2) == 0 && digitalRead(3) == 0 && digitalRead(4) == 1)
+    if (digitalRead(2) == 0 && digitalRead(3) == 0 && digitalRead(4) == 1)
     {
-      wheel(0,80,150);
-    }
-    else
-    {
-      wheel(-50,0,250);
-    }
-    if(robot_direction == robot_dirs[1])//로봇이 앞을 보고 있으면
-    {
-      robot_position += 1;
-      location(robot_position);
+      wheel(0, 80, 150);
     }
     else
     {
-      robot_position -= 1;
-      location(robot_position);
+      wheel(-50, 0, 250);
     }
   }
+}
   /*
-  int lspd, rspd;
-  lspd = rspd = 120;
-  while (1) {
+    int lspd, rspd;
+    lspd = rspd = 120;
+    while (1) {
     exc.setMotorSpeeds(1, lspd, lspd);
     exc.setMotorSpeeds(2, rspd, rspd);
     if (digitalRead(2) == 1 && digitalRead(3) == 1 && digitalRead(4) == 1)
@@ -1151,14 +1140,13 @@ void line()
       lspd = 120;
       rspd = 120;
     }
-  }
+    }
   */
-}
 
 void line_s()
 {
   int lspd, rspd;
-  lspd = rspd = 120;
+  lspd = rspd = 100;
   while (1) {
     exc.setMotorSpeeds(1, lspd, lspd);
     exc.setMotorSpeeds(2, rspd, rspd);
@@ -1170,27 +1158,27 @@ void line_s()
     }
     if (digitalRead(2) == 1 && digitalRead(3) == 0 && digitalRead(4) == 0) //왼쪽
     {
-      lspd = -80;
-      rspd = 80;
+      lspd = -100;
+      rspd = 100;
     }
     if (digitalRead(2) == 0 && digitalRead(3) == 0 && digitalRead(4) == 1) //오른쪽
     {
-      lspd = 80;
-      rspd = -80;
+      lspd = 100;
+      rspd = -100;
     }
     if (digitalRead(2) == 0 && digitalRead(3) == 1 && digitalRead(4) == 0) //중앙
     {
-      lspd = 80;
-      rspd = 80;
+      lspd = 100;
+      rspd = 100;
     }
   }
 }
 
 void left()
 {
-  exc.setMotorSpeeds(1, -160, -160);
-  exc.setMotorSpeeds(2, 160, 160);
-  delay(500);
+  exc.setMotorSpeeds(1, -280, -280);
+  exc.setMotorSpeeds(2, 280, 280);
+  delay(400);
   while (1) {
     exc.setMotorSpeeds(1, -80, -80);
     exc.setMotorSpeeds(2, 80, 80);
@@ -1201,21 +1189,13 @@ void left()
       break;
     }
   }
-  if(robot_direction == robot_dirs[0])//왼쪽을 보고있으면, 뒤를 보는 값으로 바꿔준다.
-  {
-    robot_direction = robot_dirs[3];
-  }
-  else//아니라면, 값을 빼준다.
-  {
-    robot_direction = robot_dirs[robot_direction-1];
-  }
 }
 
 void right()
 {
-  exc.setMotorSpeeds(1, 160, 160);
-  exc.setMotorSpeeds(2, -160, -160);
-  delay(500);
+  exc.setMotorSpeeds(1, 280, 280);
+  exc.setMotorSpeeds(2, -280, -280);
+  delay(400);
   while (1) {
     exc.setMotorSpeeds(1, 80, 80);
     exc.setMotorSpeeds(2, -80, -80);
@@ -1226,15 +1206,6 @@ void right()
       break;
     }
   }
-  if(robot_direction == robot_dirs[3])//오른쪽을 보고있으면, 뒤를 보는 값으로 바꿔준다.
-  {
-    robot_direction = robot_dirs[0];
-  }
-  else//아니라면, 값을 더해준다.
-  {
-    robot_direction = robot_dirs[robot_direction+1];
-  }
-
 }
 
 void object_turn_f(int y)
@@ -1269,30 +1240,30 @@ void husky_grip()
 {
   HUSKYLENSResult result;
   huskylens.request();
-  while(huskylens.count() > 0)
+  while (huskylens.count() > 0)
   {
     huskylens.request();
     result = huskylens.getBlock(0);
-    if(result.width>=10){
-      if(result.xCenter<=120)
+    if (result.width >= 10) {
+      if (result.xCenter <= 120)
       {
-        exc.setMotorSpeeds(1,-30,30);
-        exc.setMotorSpeeds(2,-30,30);
+        exc.setMotorSpeeds(1, -30, 30);
+        exc.setMotorSpeeds(2, -30, 30);
       }
-      else if(result.xCenter<=220)
+      else if (result.xCenter <= 220)
       {
-        exc.setMotorSpeeds(1,30,30);
-        exc.setMotorSpeeds(2,30,30);
+        exc.setMotorSpeeds(1, 30, 30);
+        exc.setMotorSpeeds(2, 30, 30);
       }
-      else if(result.xCenter<=285)
+      else if (result.xCenter <= 285)
       {
-        exc.setMotorSpeeds(1,30,-30);
-        exc.setMotorSpeeds(2,30,-30);
+        exc.setMotorSpeeds(1, 30, -30);
+        exc.setMotorSpeeds(2, 30, -30);
       }
     }
   }
-  exc.setMotorSpeeds(1,0,0);
-  exc.setMotorSpeeds(2,0,0);
+  exc.setMotorSpeeds(1, 0, 0);
+  exc.setMotorSpeeds(2, 0, 0);
 }
 
 void turnhusky_left()
@@ -1318,13 +1289,13 @@ void turnhusky_front()
 
 char* color(int x)
 {
-  if(x == 1){
+  if (x == 1) {
     return c[0];
   }
-  if(x == 3){
+  if (x == 3) {
     return c[1];
   }
-  if(x == 4){
+  if (x == 4) {
     return c[2];
   }
 }
@@ -1348,6 +1319,7 @@ void husky(int y, int x)
   }
   if (num == 1)
   {
+    huskylens.request();
     high_cube[y][x] = 0;
     low_cube[y][x] = 2;
     lcd.setCursor(8, 0);
@@ -1359,12 +1331,41 @@ void husky(int y, int x)
     lcd.setCursor(8, 1);
     lcd.print("YELLOW");
   }
-  if (num == 2)
+  if (num >= 2)
   {
+    huskylens.request();
     HUSKYLENSResult result_1 = huskylens.get(0);
     HUSKYLENSResult result_2 = huskylens.get(1);
-    if (result_1.ID == 2 || result_2.ID == 2)
+    if (result_1.ID != 2 || result_2.ID != 2)
     {
+      if (result_1.yCenter > result_2.yCenter)
+      {
+        high_cube[y][x] = result_2.ID;
+        low_cube[y][x] = result_1.ID;
+        lcd.setCursor(8, 0);
+        lcd.print("      ");
+        lcd.setCursor(8, 0);
+        lcd.print(color(result_2.ID));
+        lcd.setCursor(8, 1);
+        lcd.print("      ");
+        lcd.setCursor(8, 1);
+        lcd.print(color(result_1.ID));
+      }
+      else if (result_1.yCenter < result_2.yCenter)
+      {
+        high_cube[y][x] = result_1.ID;
+        low_cube[y][x] = result_2.ID;
+        lcd.setCursor(8, 0);
+        lcd.print("      ");
+        lcd.setCursor(8, 0);
+        lcd.print(color(result_1.ID));
+        lcd.setCursor(8, 1);
+        lcd.print("      ");
+        lcd.setCursor(8, 1);
+        lcd.print(color(result_2.ID));
+      }
+    }
+    else if (result_1.ID == 2 || result_2.ID == 2) {
       high_cube[y][x] = 0;
       low_cube[y][x] = 2;
       lcd.setCursor(8, 0);
@@ -1375,32 +1376,6 @@ void husky(int y, int x)
       lcd.print("      ");
       lcd.setCursor(8, 1);
       lcd.print("YELLOW");
-    }
-    else if (result_1.yCenter > result_2.yCenter)
-    {
-      high_cube[y][x] = result_2.ID;
-      low_cube[y][x] = result_1.ID;
-      lcd.setCursor(8, 0);
-      lcd.print("      ");
-      lcd.setCursor(8, 0);
-      lcd.print(color(result_2.ID));
-      lcd.setCursor(8, 1);
-      lcd.print("      ");
-      lcd.setCursor(8, 1);
-      lcd.print(color(result_1.ID));
-    }
-    else if (result_1.yCenter < result_2.yCenter)
-    {
-      high_cube[y][x] = result_1.ID;
-      low_cube[y][x] = result_2.ID;
-      lcd.setCursor(8, 0);
-      lcd.print("      ");
-      lcd.setCursor(8, 0);
-      lcd.print(color(result_1.ID));
-      lcd.setCursor(8, 1);
-      lcd.print("      ");
-      lcd.setCursor(8, 1);
-      lcd.print(color(result_2.ID));
     }
   }
 }
@@ -1429,8 +1404,8 @@ void grip_open()
   bf = 1;
   while (exc.readMotorBusy(1, 1)) {}
   delay(200);
-  prizm.setServoPosition(1, 90);
-  prizm.setServoPosition(2, 90);
+  prizm.setServoPosition(1, 100);
+  prizm.setServoPosition(2, 80);
   delay(1000);
 }
 
@@ -1444,30 +1419,32 @@ void grip_close()
 
 void cube_in()
 {
-  while(1)
+  while (1)
   {
-    if(digitalRead(5) == 0)
+    if (digitalRead(5) == 0)
     {
-      wheel(0,0,0);
+      wheel(0, 25, 0);
+      delay(300);
+      wheel(0, 0, 0);
       break;
     }
-    if(digitalRead(2) == 1 && digitalRead(3) == 1 && digitalRead(4) == 0)
+    if (digitalRead(2) == 1 && digitalRead(3) == 1 && digitalRead(4) == 0)
     {
-      while(1)
+      while (1)
       {
-        wheel(0,-25,0);
-        if(digitalRead(2) == 0 && digitalRead(3) == 1 && digitalRead(4) == 0)
+        wheel(0, -25, 0);
+        if (digitalRead(2) == 0 && digitalRead(3) == 1 && digitalRead(4) == 0)
         {
           break;
         }
       }
     }
-    if(digitalRead(2) == 0 && digitalRead(3) == 1 && digitalRead(4) == 1)
+    if (digitalRead(2) == 0 && digitalRead(3) == 1 && digitalRead(4) == 1)
     {
-      while(1)
+      while (1)
       {
-        wheel(0,25,0);
-        if(digitalRead(2) == 0 && digitalRead(3) == 1 && digitalRead(4) == 0)
+        wheel(0, 25, 0);
+        if (digitalRead(2) == 0 && digitalRead(3) == 1 && digitalRead(4) == 0)
         {
           break;
         }
@@ -1475,64 +1452,25 @@ void cube_in()
     }
     else
     {
-      wheel(0,0,40);
-    }
-    
-  }
-  
-  /*
-  int lspd, rspd;
-  lspd = rspd = 30;
-  while (1) {
-    exc.setMotorSpeeds(1, lspd, lspd);
-    exc.setMotorSpeeds(2, rspd, rspd);
-    if (digitalRead(5) == 0)
-    {
-      exc.setMotorSpeeds(1, 0, 0);
-      exc.setMotorSpeeds(2, 0, 0);
-      break;
-    }
-    if (digitalRead(2) == 1 && digitalRead(3) == 1 && digitalRead(4) == 0) //왼쪽
-    {
-      lspd = -30;
-      rspd = 30;
-    }
-    if (digitalRead(2) == 0 && digitalRead(3) == 1 && digitalRead(4) == 1) //오른쪽
-    {
-      lspd = 30;
-      rspd = -30;
-    }
-    if (digitalRead(2) == 0 && digitalRead(3) == 1 && digitalRead(4) == 0) //중앙
-    {
-      lspd = 30;
-      rspd = 30;
+      wheel(0, 0, 40);
     }
   }
-  */
-  //husky_grip();
 }
 
 void cube_out()
 {
-  if(bf == 1){
-  exc.resetEncoders(1);
-  exc.resetEncoders(2);
-  exc.setMotorTargets(1, -120, -240, -120, -240);
-  exc.setMotorTargets(2, -120, -240, -120, -240);
-  while (exc.readMotorBusy(1, 1)) {}
+  if (bf == 1) {
+    exc.resetEncoders(1);
+    exc.resetEncoders(2);
+    exc.setMotorTargets(1, -120, -240, -120, -240);
+    exc.setMotorTargets(2, -120, -240, -120, -240);
+    while (exc.readMotorBusy(1, 1)) {}
   }
-  else{
-  exc.resetEncoders(1);
-  exc.resetEncoders(2);
-  exc.setMotorTargets(1, -120, -270, -120, -270);
-  exc.setMotorTargets(2, -120, -270, -120, -270);
-  while (exc.readMotorBusy(1, 1)) {}}
-}
-
-//LCD계열
-
-void location(int y)
-{
-  lcd.setCursor(16,0);
-  lcd.print(y);
+  else {
+    exc.resetEncoders(1);
+    exc.resetEncoders(2);
+    exc.setMotorTargets(1, -120, -270, -120, -270);
+    exc.setMotorTargets(2, -120, -270, -120, -270);
+    while (exc.readMotorBusy(1, 1)) {}
+  }
 }
