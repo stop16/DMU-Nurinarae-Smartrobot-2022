@@ -1,12 +1,81 @@
-# 2022NURINARAE_Smartrobot
-For SmartRobot Contest, Tetrix & Huskylens codes
+# DMU Nurinarae Smartrobot 2022
+동양미래대학교 누리나래 2022년 전국 대학생 스마트로봇 경진대회 코드입니다.
 
-#Contents
+## 목차
+1. [하드웨어 구성](#1-하드웨어-구성)
+2. [사용된 라이브러리](#2-사용된-라이브러리)
+3. [구현목표 및 내용](#3-구현목표-및-내용)
+4. [코드 설명](#4-코드-설명)
+5. [기타](#5-기타)
 
-Testing_codes : just test codes :)
+---
 
-main : main file >>> open with arduino IDE
+## 1. 하드웨어 구성
+* 기본적인 로봇의 구성은 [Pitsco사의 Tetrix](https://www.pitsco.com/Shop/TETRIX-Robotics/&TXredir=1) 프레임을 사용합니다.(대회의 규정입니다.)
+* 그립과 센서보드는 3D프린터로 제작했습니다. Tetrix 프레임이 전반적으로 크기가 커 정교한 부품을 만들기에는 적절치 않습니다.
+* 하드웨어는 구동부, 센서부, 그립부, 제어부로 나뉩니다.
 
-현재 진행상황 : 알고리즘 완료.
+### 구동부
+|이름|사용처|
+|--|--|
+|TorqueNADO motor|로봇을 움직이게 합니다.|
+|Omni wheel|다뱡향 기동을 지원하게 합니다. 관련 자료는 구글링하면 나옵니다.|
+|Tetrix NiMH 배터리|전원을 공급합니다.|
 
-Memo : 놓고 잡을 때 세부값 조정 필요, 라인트레이싱 고속/저속 모드 개발 필요.
+### 센서부
+|이름|사용처|
+|--|--|
+|적외선 센서|라인트레이싱을 위해 3개 장착됩니다. 가변저항이 있는 모델로 구매하는 것이 센서의 감도 튜닝이 가능하므로 편합니다.|
+|적외선 센서|전방 오브젝트 감지를 위해 사용합니다.|
+|[HuskyLens](https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336)|AI카메라입니다. 색상 인식 모드로 오브젝트 색상 인식에 사용합니다.|
+
+### 그립부
+|이름|사용처|
+|--|--|
+|SG90S 서보모터|그립을 움직이게 합니다.|
+|3D프린팅된 그립|큐브 오브젝트를 잡게 합니다.|
+
+### 제어부
+|이름|사용처|
+|--|--|
+|Tetrix Prizm|모든 제어를 총괄합니다.|
+|Tetrix Motor Expansion Board|4개의 TorqueNADO 모터를 활용하기 위해서 사용합니다.|
+|Tetrix Port Expansion Board|I2C 포트 확장 기능과 Breadboard를 제공해 사용합니다.|
+
+---
+
+## 2. 사용된 라이브러리
+
+* HuskyLens로부터 데이터를 송수신받기 위해서, HuskyLens Arduino 라이브러리를 사용합니다. [Github Repository](https://github.com/HuskyLens/HUSKYLENSArduino)와 [공식 Wiki](https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336)를 참고하면 편합니다.
+* 16x2 LCD 디스플레이를 사용하기 위해 [LiquidCrystal_I2C](https://github.com/johnrickman/LiquidCrystal_I2C) 라이브러리를 사용합니다. 해당 링크는 작성일 기준 Archived된 상태이니 Arduino IDE에 내장된 라이브러리 매니저를 통해서 설치하면 편합니다.
+
+---
+
+## 3. 구현목표 및 내용
+
+### 핵심적 주제
+* 자율주행 알고리즘을 구현하여 기둥 오브젝트와 큐브 오브젝트의 색깔을 맞춰야 합니다.
+* 안정적으로 큐브 오브젝트를 잡고 놓을 수 있어야 합니다.
+* HuskyLens로부터 들어온 값을 바탕으로 기둥과 큐브를 구분하고, 인식된 값을 저장해야 합니다.
+
+원활한 자율주행을 위해서, 가상 맵을 정의합니다. 이를 통해 가상으로 기둥 오브젝트와 큐브 오브젝트의 위치를 저장할 수 있게 됩니다. 이에 따라 발생할 수 있는 경우의 수를 바탕으로, 적절한 행동을 도출하는 알고리즘을 제작했습니다.
+
+안정적으로 큐브 오브젝트를 운반하기 위해 로봇에 최적화된 값으로 라인트레이싱 로직을 수정했습니다.
+
+HuskyLens로부터 받은 좌표값을 적절히 계산하여 기둥과 큐브를 구분합니다.
+
+---
+
+## 4. 코드 설명
+### Test Code
+로봇의 동작을 시험하기 위한 코드들입니다.
+* i2cfind.ino : i2c주소값을 확인합니다. 여러 개의 i2c 소자를 활용하기 때문에 주소값을 확인해야 합니다.
+* i2cdisplaytest.ino : i2c 디스플레이 동작을 확인합니다.
+* huskylens_arduino.ino : HuskyLens 예제코드입니다.
+### Main Code
+* 자율주행, 라인트레이싱, 미션수행, 오브젝트 관리가 모두 통합되어 있습니다. 자율주행 파트가 특히 난해합니다.
+---
+
+## 5. 기타
+* 모든 값들은 2022년도 누리나래 팀의 로봇에 최적화되어 있습니다. 따라서 이 코드는 절대 확실한 동작을 보장하지 않습니다. 각종 값들이 본인 로봇에 적합한지 확인 후 적용하길 권고합니다.
+---
